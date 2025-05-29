@@ -30,7 +30,9 @@ Note: depending on your system, you may need to append `sudo` before all `docker
 
 1. Within the `workshop` directory, run the following Docker compose command:
 
-   `docker compose up -d`
+   ```
+   docker compose up -d
+   ```
 
    This command uses the `compose.yaml` file in the `workshop` directory to create:
 
@@ -55,7 +57,9 @@ Note: depending on your system, you may need to append `sudo` before all `docker
 
    HAProxy and the test web servers are now up and running. You can use `docker compose logs` to see their logs. This output includes the logs from all of the containers created using the Docker compose file:
 
-   `docker compose logs`
+   ```
+   docker compose logs
+   ```
 
    Output:
    ```
@@ -78,7 +82,6 @@ Note: depending on your system, you may need to append `sudo` before all `docker
 
    haproxy-1  | [WARNING]  (8) : Server reviewservers/review1 is UP, reason: Layer4 check passed, check duration: 0ms. 3 active and 0 backup servers online. 0 sessions requeued, 0 total in queue.
    ```
-
 
    If for some reason you want to delete and recreate these containers you can run `docker compose down` inside the `workshop` directory. You can then run `docker compose up -d` again to create the containers again. 
 
@@ -103,7 +106,9 @@ Note: depending on your system, you may need to append `sudo` before all `docker
 
 1. View the logs to see more details about the request as it passed through HAProxy:
 
-   `docker compose logs haproxy`
+   ```
+   docker compose logs haproxy
+   ```
 
    Output:
 
@@ -116,7 +121,9 @@ Note: depending on your system, you may need to append `sudo` before all `docker
 
 1. Alternatively, we can issue a similar command via `curl` by running a [curl Docker container](https://hub.docker.com/r/alpine/curl-http3) and passing a command to it. The container exits after the command completes:
 
-   `docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv haproxy:80`
+   ```
+   docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv haproxy:80
+   ```
 
    Since we are running the curl container in the same network (`workshop_mynetwork`) as the HAProxy container, we can refer to the HAProxy container by name in the URL we pass to curl, in this case `haproxy`. 
 
@@ -155,7 +162,9 @@ Note: depending on your system, you may need to append `sudo` before all `docker
 
    The logs show that this time, the server named `cart3` in the backend `cartservers` ultimately handled this request.
 
-   `docker compose logs haproxy`
+   ```
+   docker compose logs haproxy
+   ```
 
    ```
    haproxy-1  | 172.18.0.9:42568 [19/May/2025:20:21:50.551] cart cartservers/cart3 0/0/0/0/0 200 254 - - ---- 1/1/0/0/0 0/0 "GET / HTTP/1.1"
@@ -163,7 +172,9 @@ Note: depending on your system, you may need to append `sudo` before all `docker
 
 1. In the `workshop` directory, we can run `docker compose logs` to see the test web server logs. We can see our GET requests:
 
-   `docker compose logs`
+   ```
+   docker compose logs
+   ```
 
    Output:
 
@@ -181,7 +192,9 @@ Note: depending on your system, you may need to append `sudo` before all `docker
 
 1. For these tasks, we will not have to completely restart HAProxy, nor will we have to delete and recreate our container to change the configuration. We can instead make our changes to our local copy of the `haproxy.cfg` file and perform a hitless reload of HAProxy using this command:
 
-   `docker compose kill -s USR2 haproxy`
+   ```
+   docker compose kill -s USR2 haproxy
+   ```
 
 1. After running this command, check the HAProxy logs again. We see that HAProxy reloads:
 
@@ -199,14 +212,6 @@ Note: depending on your system, you may need to append `sudo` before all `docker
    haproxy-1  | [WARNING]  (1) : Former worker (8) exited with code 0 (Exit)
    ```
 
-1. We can access HAProxy's Runtime API using a [Docker container running socat](https://hub.docker.com/r/alpine/socat). This command lists the available HAProxy Runtime API commands. We will use this in one of the exercises. Copy and paste both lines:
-
-   ```
-   echo "help" |
-   docker run -i --net workshop_mynetwork --rm alpine/socat stdio TCP4:haproxy:9000
-   ```
-
-
 With all of this in place, we are ready to move on to our exercises!
 
 ## Task #1: Add a new frontend that binds on port 81
@@ -215,7 +220,9 @@ Task: Create a new frontend named `cart2` that inherits from the defaults sectio
 
 Reload HAProxy after making configuration changes:
 
-`docker compose kill -s USR2 haproxy`
+```
+docker compose kill -s USR2 haproxy
+```
 
 Documentation reference: [Frontend configuration example](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/proxying-essentials/configuration-basics/frontends/#frontend-configuration-example)
 
@@ -223,7 +230,9 @@ Testing: Send a request to HAProxy in the browser or using curl on port 81.
 
 `http://localhost:81/`
 
-`docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv haproxy:81`
+```
+docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv haproxy:81
+```
 
 We set `option tcplog` in the `tcp_defaults` defaults section that the `cart2` frontend inherits from. This sets the logging format. The other frontend `cartservers` which inherits from the `http_defaults` section uses the `option httplog` log format. Check the logs to see how requests to each frontend are logged.
 
@@ -245,7 +254,8 @@ Task: Change the load balancing algorithm for the backend named `cartservers` fr
 
 Reload HAProxy after making configuration changes:
 
-`docker compose kill -s USR2 haproxy`
+```docker compose kill -s USR2 haproxy
+```
 
 Documentation reference: [Change the load balancing algorithm](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/proxying-essentials/configuration-basics/backends/#change-the-load-balancing-algorithm)
 
@@ -257,7 +267,9 @@ Task: Enable health checks on the servers listed in the backend named `cartserve
 
 Reload HAProxy after making configuration changes:
 
-`docker compose kill -s USR2 haproxy`
+```
+docker compose kill -s USR2 haproxy
+```
 
 Documentation reference: [Enable health checks](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/proxying-essentials/configuration-basics/backends/#enable-health-checks)
 
@@ -269,13 +281,17 @@ Task: In the frontend named `cart`, add an ACL that will deny requests with a Us
 
 Reload HAProxy after making configuration changes:
 
-`docker compose kill -s USR2 haproxy`
+```
+docker compose kill -s USR2 haproxy
+```
 
 Documentation reference: [Block requests](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/proxying-essentials/custom-rules/acls/#block-requests)
 
 Testing: Test with curl.
 
-`docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv -H "User-Agent: evil agent" haproxy:80`
+```
+docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv -H "User-Agent: evil agent" haproxy:80
+```
 
 Your request will be denied:
 
@@ -291,7 +307,9 @@ Task: In the frontend named `cart`, create a variable that will hold the HTTP ve
 
 Reload HAProxy after making configuration changes:
 
-`docker compose kill -s USR2 haproxy`
+```
+docker compose kill -s USR2 haproxy
+```
 
 Documentation reference: [Fetches](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/proxying-essentials/custom-rules/fetches/)
 
@@ -308,13 +326,17 @@ Task: Use the `when()` converter to log debug information when processing encoun
 
 Reload HAProxy after making configuration changes:
 
-`docker compose kill -s USR2 haproxy`
+```
+docker compose kill -s USR2 haproxy
+```
 
 Documentation reference: [Conditionally log debug_str](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/proxying-essentials/custom-rules/converters/#example-%231%3A-conditionally-log-debug_str)
 
 Testing: Use the same curl command you used for Task #4. HAProxy will log the debug string.
 
-`docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv -H "User-Agent: evil agent" haproxy:80`
+```
+docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv -H "User-Agent: evil agent" haproxy:80
+```
 
 Output in the logs:
 
@@ -328,15 +350,21 @@ Task: Use a map file to enable path based routing for the frontend named `cart`.
 
 Reload HAProxy after making configuration changes:
 
-`docker compose kill -s USR2 haproxy`
+```
+docker compose kill -s USR2 haproxy
+```
 
 Documentation reference: [Map files for path-based routing](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/proxying-essentials/custom-rules/map-files/#map-files-for-path-based-routing)
 
 Testing: Access HAProxy in the browser or with curl. Go to `/cart/` and `/review/`. (Tip: Remember to include the forward slash on the end of the path). Each of these requests should route to its appropriate backend. Look in the logs to see how the requests are handled:
 
-`docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv haproxy:80/cart/`
+```
+docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv haproxy:80/cart/
+```
 
-`docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv haproxy:80/review/`
+```
+docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv haproxy:80/review/
+```
 
 ```
 haproxy-1  | 172.16.0.2:46562 [20/May/2025:18:55:21.791] cart cartservers/cart1 0/0/0/1/1 200 259 - - ---- 1/1/0/0/0 0/0 "GET /cart/ HTTP/1.1" dbg={-}
@@ -349,7 +377,9 @@ Task: Uncomment the stick table example to see stick tables in action.
 
 Reload HAProxy after making configuration changes:
 
-`docker compose kill -s USR2 haproxy`
+```
+docker compose kill -s USR2 haproxy
+```
 
 Documentation reference: [Create a stick table](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/proxying-essentials/custom-rules/stick-tables/#create-a-stick-table)
 
@@ -369,11 +399,15 @@ Task: Change the `paths.map` file to be an *optional* file which the load balanc
 
 Reload HAProxy after making configuration changes:
 
-`docker compose kill -s USR2 haproxy`
+```
+docker compose kill -s USR2 haproxy
+```
 
 Documentation reference: [Virtual and optional files](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/proxying-essentials/custom-rules/map-files/#virtual-and-optional-files)
 
 Testing:
+
+We can access HAProxy's Runtime API using a [Docker container running socat](https://hub.docker.com/r/alpine/socat).
 
 Use the runtime API command `add map` to add an entry for the `/api/` path to the map (copy/paste both lines):
 
@@ -407,13 +441,22 @@ Output:
 
 Note that since we used the map as an optional file and added an entry to it programmatically, this change is not saved to disk and will disappear upon restart. See the documentation reference for this task for more information about persisting these changes.
 
+Issue the `help` command to see all available HAProxy Runtime API commands. Copy and paste both lines:
+
+```
+echo "help" |
+docker run -i --net workshop_mynetwork --rm alpine/socat stdio TCP4:haproxy:9000
+```
+
 ## Bonus Task #2: Enable the statistics dashboard
 
 Task: Enable the statistics dashboard. Hint: the frontend you create should inherit from the `http_defaults` defaults section.
 
 Reload HAProxy after making configuration changes:
 
-`docker compose kill -s USR2 haproxy`
+```
+docker compose kill -s USR2 haproxy
+```
 
 Documentation reference: [Enable the dashboard](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/alerts-and-monitoring/statistics/)
 
@@ -421,7 +464,9 @@ Testing: Go to `http://localhost:8404/stats` in the browser. Note: be sure that 
 
 Stop the `server1` test server using the following command:
 
-`docker compose stop server1`
+```
+docker compose stop server1
+```
 
 Output:
 ```
@@ -433,7 +478,9 @@ What happens on the statistics dashboard?
 
 Bring the test server back up:
 
-`docker compose start server1`
+```
+docker compose start server1
+```
 
 We see the changes in the statuses of the servers because we enabled the health checks on the servers.
 
@@ -443,7 +490,9 @@ Task: Change the load balancing algorithm of the `reviewservers` backend to use 
 
 Reload HAProxy after making configuration changes:
 
-`docker compose kill -s USR2 haproxy`
+```
+docker compose kill -s USR2 haproxy
+```
 
 Documentation reference: 
 [balance reference](https://www.haproxy.com/documentation/haproxy-configuration-manual/latest/#4.2-balance)
