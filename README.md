@@ -228,7 +228,9 @@ Documentation reference: [Frontend configuration example](https://www.haproxy.co
 
 Testing: Send a request to HAProxy in the browser or using curl on port 81.
 
-`http://localhost:81/`
+```
+http://localhost:81/
+```
 
 ```
 docker run -ti --net workshop_mynetwork --rm alpine/curl-http3 curl -vv haproxy:81
@@ -254,7 +256,8 @@ Task: Change the load balancing algorithm for the backend named `cartservers` fr
 
 Reload HAProxy after making configuration changes:
 
-```docker compose kill -s USR2 haproxy
+```
+docker compose kill -s USR2 haproxy
 ```
 
 Documentation reference: [Change the load balancing algorithm](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/proxying-essentials/configuration-basics/backends/#change-the-load-balancing-algorithm)
@@ -273,7 +276,7 @@ docker compose kill -s USR2 haproxy
 
 Documentation reference: [Enable health checks](https://www.haproxy.com/documentation/haproxy-configuration-tutorials/proxying-essentials/configuration-basics/backends/#enable-health-checks)
 
-Testing: We will come back to testing this one later (*Bonus Task #2: Enable the statistics dashboard).
+Testing: We will come back to testing this one later (*Bonus Task #2: Enable the statistics dashboard*).
 
 ## Task #4: Use an ACL to deny requests
 
