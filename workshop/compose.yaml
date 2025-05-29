@@ -1,0 +1,52 @@
+services:
+  haproxy:
+    image: haproxytech/haproxy-alpine:latest
+    ports:
+      - "80:80"
+      - "81:81"
+      - "3316:3316"
+      - "443:443/tcp"
+      - "9000:9000"
+      - "8404:8404"
+    volumes:
+      - "./:/usr/local/etc/haproxy:ro"
+    networks:
+      mynetwork:
+        ipv4_address: 172.16.0.10
+  server1:
+    image: "jmalloc/echo-server:latest"
+    networks:
+      mynetwork:
+        ipv4_address: 172.16.0.11
+  server2:
+    image: "jmalloc/echo-server:latest"
+    networks:
+      mynetwork:
+        ipv4_address: 172.16.0.12
+  server3:
+    image: "jmalloc/echo-server:latest"
+    networks:
+      mynetwork:
+        ipv4_address: 172.16.0.13
+  server4:
+    image: "jmalloc/echo-server:latest"
+    networks:
+      mynetwork:
+        ipv4_address: 172.16.0.14
+  server5:
+    image: "jmalloc/echo-server:latest"
+    networks:
+      mynetwork:
+        ipv4_address: 172.16.0.15
+  server6:
+    image: "jmalloc/echo-server:latest"
+    networks:
+      mynetwork:
+        ipv4_address: 172.16.0.16
+networks:
+  mynetwork:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/24
+          gateway: 172.16.0.1
