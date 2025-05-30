@@ -451,6 +451,8 @@ echo "help" |
 docker run -i --net workshop_mynetwork --rm alpine/socat stdio TCP4:haproxy:9000
 ```
 
+Note that for demonstration purposes and for ease of use in this workshop, we are using an additional container to run `socat`. For most real-world applications, you would probably connect to the HAProxy Runtime API in a different way, such as by running a `socat` binary installed on your system or by writing a program to issue the commands and process the output.
+
 ## Bonus Task #2: Enable the statistics dashboard
 
 Task: Enable the statistics dashboard. Hint: the frontend you create should inherit from the `http_defaults` defaults section.
