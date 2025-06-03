@@ -240,7 +240,7 @@ We set `option tcplog` in the `tcp_defaults` defaults section that the `cart2` f
 
 `cart` (`option httplog`):
 ```
-`haproxy-1  | 75.201.195.235:64258 [20/May/2025:17:04:26.619] cart cartservers/cart1 0/0/0/0/0 200 589 - - ---- 1/1/0/0/0 0/0 "GET / HTTP/1.1" dbg={-}
+haproxy-1  | 75.201.195.235:64258 [20/May/2025:17:04:26.619] cart cartservers/cart1 0/0/0/0/0 200 589 - - ---- 1/1/0/0/0 0/0 "GET / HTTP/1.1" dbg={-}
 ```
 
 `cart2` (`option tcplog`):
